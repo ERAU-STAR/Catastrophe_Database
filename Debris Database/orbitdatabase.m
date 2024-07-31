@@ -66,17 +66,19 @@ sp_dir = append(Specific.path,'\sp_orbit_',date,'_',desc);
 mkdir(sp_dir);
 mkdir(append(sp_dir,'\orbits'));
 
+% Number of explosions per orbit
+div = eval(cell2mat(inputdlg({'Segments'},'Number of explosions per orbit', [1 30], {'8'}))); 
+%div = 8;
+
 % Creation of the orbit database
 for j = 1:length(Families_files)
-    createspecificorbitdatabase(Families_files{j},eval(JClims{1}),eval(JClims{2}),plotting);
+    createspecificorbitdatabase(Families_files{j},eval(JClims{1}),eval(JClims{2}),plotting,div);
 end
 
 % get data about the available orbits
 files = what(append(sp_dir,'\orbits'));
 files = append(files.path,'\',files.mat);
 
-% Number of explosions per orbit
-div = 8;
 
 % Initializing variables
 IC_exp = [];
@@ -99,8 +101,9 @@ for i = 1:length(files)
 end
 
 % Saving initial conditions based on user selections
-idx = ismember(ceil((1:length(IC_exp))/8),orbs);
+idx = ismember(ceil((1:length(IC_exp))/div),orbs);
 IC_exp = IC_exp(idx,:);
 t0_exp = t0_exp(idx);
+orbit_info_exp = orbit_info(idx);
 
-save(append(sp_dir,'\ICD_',desc,'_',string(length(IC_exp)),'.mat'),'IC_exp','t0_exp','orbit_info'); % ORBIT DATABASE
+save(append(sp_dir,'\ICD_',desc,'_',string(length(IC_exp)),'.mat'),'IC_exp','t0_exp','orbit_info_exp'); % ORBIT DATABASE
